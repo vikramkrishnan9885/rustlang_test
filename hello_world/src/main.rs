@@ -13,6 +13,28 @@ comment
 /// * Supports Markdown
 /// If you pass --test to Rustdoc, it will also run the tests for you
 
+use std::fmt; // This is used to import 'fmt'. This is similar to the import statement in python and Java
+
+
+// We want to derive the fmt::Debug implemetation for Structure
+#[derive(Debug)]
+struct Structure(i32);
+// However, we will implement our own fmt::Display for Structure
+impl fmt::Display for Structure {
+	// This trait requires `fmt` with this exact signature.
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        // Write strictly the first element into the supplied output
+        // stream: `f`. Returns `fmt::Result` which indicates whether the
+        // operation succeeded or failed. Note that `write!` uses syntax which
+        // is very similar to `println!`.
+        write!(f, "{}", self.0)
+    }
+}
+
+#[derive(Debug)]
+struct Deep(Structure);
+
+
 // Create the main function
 
 fn main(){
@@ -59,4 +81,11 @@ fn main(){
 			, variable3 = "This is the third variable"
 			); // Using named arguments
 	println!("{}, in binary {:b}, in hex {:x}, in octal {:o}, in float {4:.1$}", 11,11,11,11,11.0);
+
+	// Now let us try println with structures
+	println!("Now {:?} will print!", Structure(3));
+	println!("Now {:?} will print!", Deep(Structure(7)));
+
+	// Now let us try println Display with structures
+	println!("Now {} will print!", Structure(3));
 }

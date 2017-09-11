@@ -105,6 +105,18 @@
 <span id="60">60</span>
 <span id="61">61</span>
 <span id="62">62</span>
+<span id="63">63</span>
+<span id="64">64</span>
+<span id="65">65</span>
+<span id="66">66</span>
+<span id="67">67</span>
+<span id="68">68</span>
+<span id="69">69</span>
+<span id="70">70</span>
+<span id="71">71</span>
+<span id="72">72</span>
+<span id="73">73</span>
+<span id="74">74</span>
 </pre><pre class="rust ">
 <span class="comment">// This is how you create a comment</span>
 
@@ -122,6 +134,13 @@ comment
 <span class="doccomment">/// If you pass --test to Rustdoc, it will also run the tests for you</span>
 
 <span class="comment">// Create the main function</span>
+
+<span class="comment">// We want to derive the fmt::Debug implemetation for Structure</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
+<span class="kw">struct</span> <span class="ident">Structure</span>(<span class="ident">i32</span>);
+
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
+<span class="kw">struct</span> <span class="ident">Deep</span>(<span class="ident">Structure</span>);
 
 <span class="kw">fn</span> <span class="ident">main</span>(){
 
@@ -167,6 +186,11 @@ comment
 			, <span class="ident">variable3</span> <span class="op">=</span> <span class="string">&quot;This is the third variable&quot;</span>
 			); <span class="comment">// Using named arguments</span>
 	<span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;{}, in binary {:b}, in hex {:x}, in octal {:o}, in float {4:.1$}&quot;</span>, <span class="number">11</span>,<span class="number">11</span>,<span class="number">11</span>,<span class="number">11</span>,<span class="number">11.0</span>);
+
+	<span class="comment">// Now let us try println with structures</span>
+	<span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;Now {:?} will print!&quot;</span>, <span class="ident">Structure</span>(<span class="number">3</span>));
+	<span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;Now {:?} will print!&quot;</span>, <span class="ident">Deep</span>(<span class="ident">Structure</span>(<span class="number">7</span>)));
+
 }
 </pre>
 </section>

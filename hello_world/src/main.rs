@@ -15,7 +15,6 @@ comment
 
 use std::fmt; // This is used to import 'fmt'. This is similar to the import statement in python and Java
 
-
 // We want to derive the fmt::Debug implemetation for Structure
 #[derive(Debug)]
 struct Structure(i32);
@@ -34,6 +33,77 @@ impl fmt::Display for Structure {
 #[derive(Debug)]
 struct Deep(Structure);
 
+// Now we will try and implement fmt::Disply for a collection like structure
+
+struct List(Vec<i32>); // Define a structure named List containing a Vec
+
+impl fmt::Display for List {
+	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+	// Implementing fmt::Display for a structure where the elements must 
+	// each be handled sequentially is tricky. The problem is that each 
+	// write! generates a fmt::Result. Proper handling of this requires 
+	// dealing with all the results. Rust provides the try! macro and 
+	// alternatively the equivalent ? operator for exactly this purpose.
+	// try!(write!(f, "{}", value)); or with the ? shorthand
+	// write!(f,"{}", value)?;
+
+	// Instead of taking Vec<i32>s as our arguments, we take a reference: 
+	// &Vec<i32>. And instead of passing v1 and v2 directly, we pass &v1 
+	// and &v2. We call the &T type a ‘reference’, and rather than owning 
+	// the resource, it borrows ownership. A binding that borrows something 
+	// does not deallocate the resource when it goes out of scope. 
+	// This means that after the call to foo(), we can use our original 
+	// bindings again. References are immutable, like bindings. 
+	// There’s a second kind of reference: &mut T. A ‘mutable reference’ 
+	// allows you to mutate the resource you’re borrowing. 
+	let vec = &self.0;
+
+    write!(f, "[")?;
+
+    // Iterate over `vec` in `v` while enumerating the iteration
+    // count in `count`.
+    for (count, v) in vec.iter().enumerate() {
+        // For every element except the first, add a comma.
+        // Use the ? operator, or try!, to return on errors.
+        if count != 0 { write!(f, ", ")?; }
+        write!(f, "{}", v)?;
+    }
+
+    // Close the opened bracket and return a fmt::Result value
+    write!(f, "]")
+	}
+}
+
+
+// Playing around with basic Ownership related concepts
+
+// Immutable references
+fn foo(v1: &Vec<i32>, v2: &Vec<i32>) -> i32 {
+    // do stuff with v1 and v2
+
+    // return the answer
+    42
+}
+
+fn print_foo(){
+
+	let v1 = vec![1, 2, 3];
+	let v2 = vec![1, 2, 3];
+
+	let answer = foo(&v1, &v2);
+
+	println!("Meaning of life is {}", answer);
+}
+
+fn print_mutable(){
+	// Mutable references
+	let mut x = 5;
+	{
+		let y = &mut x;
+		*y += 1;
+	}
+	println!("{}", x);
+}
 
 // Create the main function
 
@@ -88,4 +158,12 @@ fn main(){
 
 	// Now let us try println Display with structures
 	println!("Now {} will print!", Structure(3));
+
+	// Collection type structures
+	let v = List(vec![1, 2, 3]);
+    println!("{}", v);
+
+	// Testing Mutable and immutable references
+	print_foo();
+	print_mutable();
 }

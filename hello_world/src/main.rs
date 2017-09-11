@@ -13,7 +13,7 @@ comment
 /// * Supports Markdown
 /// If you pass --test to Rustdoc, it will also run the tests for you
 
-use std::fmt; // This is used to import 'fmt'. This is similar to the import statement in python and Java
+use std::fmt::{self, Formatter, Display}; // This is used to import 'fmt'. This is similar to the import statement in python and Java
 
 // We want to derive the fmt::Debug implemetation for Structure
 #[derive(Debug)]
@@ -105,6 +105,33 @@ fn print_mutable(){
 	println!("{}", x);
 }
 
+// Implementing display for custom structures
+struct City {
+	name: &'static str,
+	// A 'static lifetime is the longest possible lifetime, and lasts 
+	// for the lifetime of the running program. A 'static lifetime may 
+	// also be coerced to a shorter lifetime. There are two ways to make 
+	// a variable with 'static lifetime, and both are stored in the 
+	// read-only memory of the binary:
+	// Make a constant with the static declaration.
+	// Make a string literal which has type: &'static str.
+
+	lat: f32,
+	lon: f32, // Note the comma
+}
+impl Display for City {
+    // `f` is a buffer, this method must write the formatted string into it
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+        let lat_c = if self.lat >= 0.0 { 'N' } else { 'S' };
+        let lon_c = if self.lon >= 0.0 { 'E' } else { 'W' };
+
+        // `write!` is like `format!`, but it will write the formatted string
+        // into a buffer (the first argument)
+        write!(f, "{}: {:.3}°{} {:.3}°{}",
+               self.name, self.lat.abs(), lat_c, self.lon.abs(), lon_c)
+    }
+}
+
 // Create the main function
 
 fn main(){
@@ -166,4 +193,51 @@ fn main(){
 	// Testing Mutable and immutable references
 	print_foo();
 	print_mutable();
+
+	// Printing out user defined struct
+	for city in [
+        City { name: "Dublin", lat: 53.347778, lon: -6.259722 },
+        City { name: "Oslo", lat: 59.95, lon: 10.75 },
+        City { name: "Vancouver", lat: 49.25, lon: -123.1 },
+    ].iter() {
+        println!("{}", *city);
+    }
+
+	// Variables can be type annotated
+	let logical_var: bool = true;
+	let a_float: f64 = 1.0; // This is the conventional method of annotation
+	let an_integer = 5i32; // Suffix annotation
+	let my_float = 3.0; // This uses the default for float f64
+	let my_integer = 7; // This uses the default for int i32
+	let mut mutable_var = 12;
+	mutable_var = 10;
+
+	println!("{}",logical_var);
+	println!("{}",a_float);
+	println!("{}",an_integer);
+	println!("{}",my_float);
+	println!("{}",my_integer);
+	println!("{}",mutable_var);
+
+	// Integer addition
+    println!("1 + 2 = {}", 1u32 + 2);
+
+    // Integer subtraction
+    println!("1 - 2 = {}", 1i32 - 2);
+	// println!("1 -2 = {}", 1u32-2);
+
+    // Short-circuiting boolean logic
+    println!("true AND false is {}", true && false);
+    println!("true OR false is {}", true || false);
+    println!("NOT true is {}", !true);
+
+    // Bitwise operations
+    println!("0011 AND 0101 is {:04b}", 0b0011u32 & 0b0101);
+    println!("0011 OR 0101 is {:04b}", 0b0011u32 | 0b0101);
+    println!("0011 XOR 0101 is {:04b}", 0b0011u32 ^ 0b0101);
+    println!("1 << 5 is {}", 1u32 << 5);
+    println!("0x80 >> 2 is 0x{:x}", 0x80u32 >> 2);
+
+    // Use underscores to improve readability!
+    println!("One million is written as {}", 1_000_000u32);
 }

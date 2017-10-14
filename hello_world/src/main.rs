@@ -14,6 +14,7 @@ comment
 /// If you pass --test to Rustdoc, it will also run the tests for you
 
 use std::fmt::{self, Formatter, Display}; // This is used to import 'fmt'. This is similar to the import statement in python and Java
+use std::mem;
 
 // We want to derive the fmt::Debug implemetation for Structure
 #[derive(Debug)]
@@ -132,8 +133,35 @@ impl Display for City {
     }
 }
 
-// Create the main function
+// Tuples are a collection of values of different types. Types are constructed using parantheses
+// and (T1, T2) where T1 and T2 are the types of its members. You can use tuples to return multiple
+// values.
+fn reverse(pair: (i32,bool)) -> (bool, i32){
+	// use let to bind members of a tuple to members
+	let (integer, boolean) = pair;
+	(boolean, integer) // note: no specific return keyword used
+}
 
+// A struct, or structure, is a custom data type that lets us name and package together multiple 
+// related values that make up a meaningful group. If you’re familiar with an object-oriented 
+// language, a struct is like an object’s data attributes. In this chapter, we’ll compare and 
+// contrast tuples with structs, demonstrate how to use structs, and discuss how to define methods 
+// and associated functions on structs to specify behavior associated with a struct’s data. 
+// The struct and enum (which is discussed in Chapter 6) concepts are the building blocks 
+// for creating new types in your program’s domain to take full advantage of Rust’s compile 
+// time type checking.
+struct Point {
+    x: i32,
+    y: i32,
+}
+struct User {
+    username: String,
+    email: String,
+    sign_in_count: u64,
+    active: bool,
+}
+
+// Create the main function
 fn main(){
 
 	// These statements will be executed when the compiled binary is called
@@ -240,4 +268,70 @@ fn main(){
 
     // Use underscores to improve readability!
     println!("One million is written as {}", 1_000_000u32);
+
+	// A tuple is a collection of values of different types. Tuples are constructed using parentheses (), 
+	// and each tuple itself is a value with type signature (T1, T2, ...), where T1, T2 are the types of its members. 
+	// Functions can use tuples to return multiple values, as tuples can hold any number of values.
+	let long_tuple = (1u8, 2u16, 3u64, 4u32, -1i8, -2i16, -4i64, 0.1f32, 0.2f64, 'a', true);
+	
+	// You can extract values using tuple indexing
+	println!("first value from long tuple is {}", long_tuple.0);
+	println!("second value from long tuple is {}", long_tuple.1);
+	println!("third value from long tuple is {}", long_tuple.2);
+	println!("fifth value from long tuple is {}", long_tuple.4);
+	println!("second to last value from long tuple is {}", long_tuple.9);
+	println!("last value from long tuple is {}", long_tuple.10);
+
+	 // Tuples can be tuple members
+    let tuple_of_tuples = ((1u8, 2u16, 2u32), (4u64, -1i8), -2i16);
+
+    // Tuples are printable
+    println!("tuple of tuples: {:?}", tuple_of_tuples); // ((u8, u16, u32), (u64, i8), i16)` cannot be formatted with the default formatter; try using `:?` instead if you are using a format string
+
+	// But long Tuples cannot be printed
+	let too_long_tuple = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12); // But adding one more element will cause the println! to fail
+    println!("too long tuple: {:?}", too_long_tuple);
+
+	// Let us use the reverse function created above
+
+	let pair = (1, true);
+    println!("pair is {:?}", pair);
+    println!("the reversed pair is {:?}", reverse(pair));
+
+    // To create one element tuples, the comma is required to tell them apart
+    // from a literal surrounded by parentheses
+    println!("one element tuple: {:?}", (5u32,));
+
+	// Fixed-size array (type signature is superfluous)
+    let xs: [i32; 5] = [1, 2, 3, 4, 5];
+
+    // All elements can be initialized to the same value
+    let ys: [i32; 500] = [0; 500];
+
+    // Indexing starts at 0
+    println!("first element of the array: {}", xs[0]);
+
+	println!("array size: {}", xs.len());
+
+	// Arrays are stack allocated
+    println!("array occupies {} bytes", mem::size_of_val(&xs));
+
+	// An array is a collection of objects of the same type T, stored in contiguous memory. 
+	// Arrays are created using brackets [], and their size, which is known at compile time, 
+	// is part of their type signature [T; size].
+	// Slices are similar to arrays, but their size is not known at compile time. 
+	// Instead, a slice is a two-word object, the first word is a pointer to the data, 
+	// and the second word is the length of the slice.
+	// Slices can be used to borrow a section of an array, and have the type signature &[T].
+	let x: &[i32] = &[1,2,4];
+	println!("{:?}",x); // cannot be formatted with the default formatter; try using `:?` instead
+
+	// To use a struct after we’ve defined it, we create an instance of that struct by specifying 
+	// concrete values for each of the fields. We create an instance by stating the name of the 
+	// struct, and then add curly braces containing key: value pairs where the keys are the names of 
+	// the fields and the values are the data we want to store in those fields. We don’t have to 
+	// specify the fields in the same order in which we declared them in the struct. In other words, 
+	// the struct definition is like a general template for the type, and instances fill in that 
+	// template with particular data to create values of the type
+
 }
